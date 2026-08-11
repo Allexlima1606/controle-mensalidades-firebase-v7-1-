@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#050505">
+<title>Controle de Mensalidades</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <img src="logo.png" class="login-logo" alt="Time Eu Posso Consigo">
+    <h1>Controle de Mensalidades</h1>
+    <div id="configWarning" class="config-warning hidden"></div>
+    <p>Entre para acessar seus clientes em qualquer dispositivo.</p>
+    <form id="loginForm">
+      <input id="email" type="email" placeholder="Seu e-mail" required>
+      <input id="password" type="password" placeholder="Senha (mín. 6 caracteres)" minlength="6" required>
+      <input id="passwordConfirm" type="password" placeholder="Confirme a senha" minlength="6" required>
+      <button class="btn-primary" type="submit">Entrar</button>
+      <button class="btn-secondary full-btn" type="button" id="registerBtn">Criar minha conta</button>
+      <button class="link-btn" type="button" id="forgotBtn">Esqueci minha senha</button>
+    </form>
+    <small id="firebaseStatus">Conectando ao Firebase...</small>
+  </div>
+</div>
+
+<div id="app" class="app hidden">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><img src="logo.png" alt="Time Eu Posso Consigo"></div>
+    <nav class="menu">
+      <button class="menu-item active" data-section="dashboard"><span>▥</span>Dashboard</button>
+      <button class="menu-item" data-section="clientes"><span>♟</span>Clientes</button>
+      <button class="menu-item" data-section="mensalidades"><span>▣</span>Mensalidades</button>
+    </nav>
+    <div class="sidebar-bottom">
+      <div class="sidebar-line"></div>
+      <div class="system-info">
+        <span class="system-icon">⚙</span>
+        <div><span id="userEmail">Sistema de controle</span><strong>nuvem • v7.0</strong></div>
+      </div>
+      <button id="logoutBtn" class="logout-btn">Sair</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div>
+        <h1 id="pageTitle">Dashboard</h1>
+        <p id="pageSubtitle">Acompanhe suas mensalidades e vencimentos.</p>
+      </div>
+      <button class="btn-primary" id="newClientBtn">＋ Novo cliente</button>
+    </header>
+
+    <section id="dashboard" class="section active">
+      <div class="cards">
+        <div class="card"><div class="card-icon blue">👥</div><div><span>Total de clientes</span><strong id="totalClientes">0</strong></div></div>
+        <div class="card"><div class="card-icon green">$</div><div><span>Recebido no mês</span><strong id="totalRecebido" class="money-green">R$ 0,00</strong></div></div>
+        <div class="card"><div class="card-icon orange">🔔</div><div><span>Próximos vencimentos</span><strong id="totalProximos">0</strong></div></div>
+        <div class="card"><div class="card-icon red">⚠</div><div><span>Mensalidades vencidas</span><strong id="totalVencidas">0</strong></div></div>
+      </div>
+
+      <div class="alert-box">
+        <div class="alert-circle">🔔</div>
+        <div><strong id="alertTitle">Carregando...</strong><p id="alertText">Calculando seus vencimentos.</p></div>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="panel">
+          <div class="panel-header"><div><h2>Próximos vencimentos</h2><p>Mensalidades que precisam de atenção.</p></div><button class="btn-outline" id="seeAllBtn">Ver todas</button></div>
+          <div id="listaProximos" class="table-container"></div>
+        </div>
+        <div class="panel status-panel">
+          <div class="panel-header"><div><h2>Status das mensalidades</h2><p>Situação atual do mês.</p></div></div>
+          <div class="status-list">
+            <div class="status-row"><div class="status-circle green">✓</div><div><strong id="statusPagas">0</strong><span>Pagas</span></div></div>
+            <div class="status-row"><div class="status-circle orange">◷</div><div><strong id="statusPendentes">0</strong><span>Pendentes</span></div></div>
+            <div class="status-row"><div class="status-circle red">×</div><div><strong id="statusVencidas">0</strong><span>Vencidas</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel financial-panel">
+        <div class="panel-header"><div><h2>Resumo financeiro</h2><p>Visão geral dos recebimentos do mês atual.</p></div><span class="month-label">📅 <span id="monthLabel"></span></span></div>
+        <div class="financial-content">
+          <div class="financial-item"><span>Total previsto</span><strong id="totalPrevisto">R$ 0,00</strong></div>
+          <div class="financial-item"><span>Total recebido</span><strong id="totalFinanceiroRecebido" class="green-text">R$ 0,00</strong></div>
+          <div class="financial-item"><span>Total pendente</span><strong id="totalPendente" class="orange-text">R$ 0,00</strong></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="clientes" class="section">
+      <div class="section-title"><div><h2>Clientes</h2><p>Cadastre e gerencie seus clientes.</p></div><button class="btn-primary" id="newClientBtn2">＋ Cadastrar cliente</button></div>
+      <div class="search-box">🔎 <input id="pesquisaCliente" type="text" placeholder="Pesquisar cliente..."></div>
+      <div id="listaClientes" class="clients-grid"></div>
+    </section>
+
+    <section id="mensalidades" class="section">
+      <div class="section-title"><div><h2>Mensalidades</h2><p>Controle pagamentos, vencimentos e lembretes.</p></div>
+      <select id="filtroStatus" class="filter-select"><option value="todos">Todos</option><option value="pendente">Pendentes</option><option value="paga">Pagas</option><option value="vencida">Vencidas</option><option value="proxima">Próximas</option></select></div>
+      <div class="panel"><div id="listaMensalidades" class="table-container"></div></div>
+    </section>
+  </main>
+</div>
+
+<div id="modalCliente" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header"><div><div class="modal-title-row"><h2 id="modalTitulo">Novo cliente</h2><span id="autosaveStatus" class="autosave-status">● Pronto</span></div><p>Alterações são salvas automaticamente na nuvem.</p></div><button id="fecharModal" class="close-button" aria-label="Fechar">×</button></div>
+    <form id="formCliente">
+      <input type="hidden" id="clienteId">
+      <div class="form-grid">
+        <div class="form-group full"><label>Nome do cliente</label><input id="nome" required placeholder="Ex.: João da Silva"></div>
+        <div class="form-group"><label>WhatsApp</label><input id="telefone" required type="tel" placeholder="47999999999"></div>
+        <div class="form-group"><label>Valor da mensalidade</label><input id="valor" required type="number" min="0" step="0.01" placeholder="150.00"></div>
+        <div class="form-group"><label>Dia do vencimento</label><input id="vencimento" required type="number" min="1" max="31" placeholder="10"></div>
+        <div class="form-group"><label>Avisar com antecedência</label><select id="aviso"><option value="1">1 dia antes</option><option value="3" selected>3 dias antes</option><option value="5">5 dias antes</option><option value="7">7 dias antes</option></select></div>
+      </div>
+      <div class="modal-actions"><span class="autosave-hint">✓ Salvamento automático ativado</span><button type="button" id="cancelarModal" class="btn-secondary">Fechar</button><button type="submit" class="btn-primary" id="saveClientBtn">Salvar agora</button></div>
+    </form>
+  </div>
+</div>
+
+<div id="toast" class="toast"><span id="toastIcon">✓</span><span id="toastText">Operação realizada.</span></div>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>

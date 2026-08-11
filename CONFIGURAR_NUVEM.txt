@@ -1,0 +1,22 @@
+CONTROLE DE MENSALIDADES PRO — FIREBASE CONFIGURADO
+
+Projeto Firebase já configurado no script.js:
+- projectId: controledemensalidades-446a0
+- Authentication por e-mail/senha
+- Firestore para sincronização dos clientes
+
+IMPORTANTE:
+1. No Firebase Console, confirme que Authentication > Sign-in method > E-mail/Senha está ATIVADO.
+2. Confirme que o Firestore Database foi criado.
+3. Publique as regras de firestore.rules.
+4. Para usar em outro celular/computador, hospede esta pasta no Firebase Hosting ou em outro servidor HTTPS.
+5. Entre com o MESMO e-mail e senha em todos os dispositivos.
+
+O sistema:
+- salva primeiro no localStorage;
+- sincroniza com Firestore quando conectado;
+- continua funcionando offline;
+- tenta reenviar alterações pendentes quando a internet volta;
+- usa as regras do Firestore para separar os dados por usuário.
+
+A API key do Firebase para aplicativos Web não é, por si só, uma senha secreta. A proteção dos dados deve ser feita pelas regras do Firestore e pelo Authentication.
